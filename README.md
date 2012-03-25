@@ -7,9 +7,10 @@ probably breaks other file types, but I don't care.
    fastqc-csf/fastqc --read {d} file.bam
 
    where {d} is:
-   0. unaligned bam file with one read only (4 in flags)
-   1. unaligned bam file with paired end reads. Takes only 1. read
-   2. unaligned bam file with paired end reads. Takes only 2. read
+   
+   * 0: unaligned bam file with one read only (4 in flags)
+   * 1: unaligned bam file with paired end reads. Takes only 1. read
+   * 2: unaligned bam file with paired end reads. Takes only 2. read
 
 #####build:
    1. ant deploy.
