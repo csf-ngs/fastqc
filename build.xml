@@ -22,7 +22,7 @@
         <!-- Compile the java code from ${src} into ${build} -->
         <javac srcdir="${src}" destdir="${build}">
             <classpath>
-                <fileset dir="lib">
+                <fileset dir=".">
                     <include name="**/*.jar" />
                 </fileset>
             </classpath>
@@ -44,9 +44,7 @@
         <mkdir dir="${deploy}"/>
         <copy todir="${deploy}">
             <fileset dir="${build}"/>
-            <fileset dir="../FastQC" excludes="uk/**,out/**,lib/**"/>
-
-
+	    <fileset dir="../FastQC" excludes="uk/**,out/**,lib/**,build/**"/>
         </copy>
 
         <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->

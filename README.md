@@ -15,7 +15,6 @@ probably breaks other file types, but I don't care.
 #####build:
    1. ant deploy.
    2. copy the fastqc-csf folder to your destination.
-   3. chmod u+x fastqc-csf/fastqc
 
 
 
