@@ -40,6 +40,7 @@ my $threads;
 my $quiet;
 my $nogroup;
 my $casava;
+my $read;
 
 my $result = GetOptions('version' => \$version,
 						'help' => \$help,
@@ -50,6 +51,7 @@ my $result = GetOptions('version' => \$version,
 						'format=s' => \$format,
 						'threads=i' => \$threads,
 						'casava' => \$casava,
+						'read' => \$read,
 						'contaminants=s' => \$contaminant,
 						 );
 
@@ -128,7 +130,15 @@ if ($format) {
 	
 }
 
+if ($read) {
 
+   unless ($read eq '0' || $read eq '1' || $read eq '2'){
+       die "this is a specialised version of fastqc you have to specify the read (0, 1 or 2)\n";
+   }
+
+}else{
+   die "this is a specialised version of fastqc you have to specify the read (0, 1 or 2)\n";
+}
 
 
 foreach (@ARGV) {
@@ -139,6 +149,8 @@ foreach (@ARGV) {
     push @files,$_;
   }
 }
+
+
 
 # This is set internally as well, but on some JREs it doesn't
 # pick up the internally set value properly, so we'll set it
@@ -223,7 +235,9 @@ DESCRIPTION
                     The file must contain sets of named contaminants in the
                     form name[tab]sequence.  Lines prefixed with a hash will
                     be ignored.
-                    
+
+    --read          The read number from the unaligned bam file: 0 for 1 read, 1 for first read in pair => 77, 2 for second read in pair => 141
+
    -q --quiet       Supress all progress messages on stdout and only report errors.
                     
 BUGS

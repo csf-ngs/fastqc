@@ -47,8 +47,10 @@ public class HTMLReportArchive {
 	private SequenceFile sequenceFile;
 	private byte [] buffer = new byte[1024];
 	private File file;
-	
-	public HTMLReportArchive (SequenceFile sequenceFile, QCModule [] modules, File file) throws IOException {
+    private final int read;
+    
+	public HTMLReportArchive (SequenceFile sequenceFile, QCModule [] modules, File file, int read) throws IOException {
+        this.read = read == 0 ? 1 : read;
 		this.sequenceFile = sequenceFile;
 		this.modules = modules;
 		this.file = file;
@@ -182,7 +184,7 @@ public class HTMLReportArchive {
 		
 
 		SimpleDateFormat df = new SimpleDateFormat("EEE d MMM yyyy");
-		addTemplate(sequenceFile.name(),df.format(new Date()));
+		addTemplate(sequenceFile.name()+" read: "+read,df.format(new Date()));
 
 		html.append("<h2>Summary</h2>\n<ul>\n");
 		

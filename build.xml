@@ -1,0 +1,63 @@
+<project name="fastqc" default="dist" basedir=".">
+    <description>
+        builds fastqc with filtering for reads in bam file .
+        build file is not done.
+        currently simply copying the class folders etc.. to deploy
+    </description>
+    <!-- set global properties for this build -->
+    <property name="src" location="uk"/>
+    <property name="build" location="build"/>
+    <property name="dist"  location="dist"/>
+    <property name="deploy"  location="fastqc-csf"/>
+
+    <target name="init">
+        <!-- Create the time stamp -->
+        <tstamp/>
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}"/>
+    </target>
+
+    <target name="compile" depends="init"
+            description="compile the source " >
+        <!-- Compile the java code from ${src} into ${build} -->
+        <javac srcdir="${src}" destdir="${build}">
+            <classpath>
+                <fileset dir="lib">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="dist" depends="compile"
+            description="generate the distribution" >
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}"/>
+
+        <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+        <jar jarfile="${dist}/fastqc.jar" basedir="${build}"/>
+    </target>
+
+    <target name="deploy" depends="clean,compile"
+            description="generate the distribution as as simple folder like original fastqc" >
+        <!-- Create the distribution directory -->
+        <mkdir dir="${deploy}"/>
+        <copy todir="${deploy}">
+            <fileset dir="${build}"/>
+            <fileset dir="../FastQC" excludes="uk/**,out/**,lib/**"/>
+
+
+        </copy>
+
+        <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+
+    </target>
+
+    <target name="clean"
+            description="clean up" >
+        <!-- Delete the ${build} and ${dist} directory trees -->
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+        <delete dir="${deploy}"/>
+    </target>
+</project>

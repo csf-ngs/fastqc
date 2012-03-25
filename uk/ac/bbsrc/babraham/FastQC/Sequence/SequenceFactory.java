@@ -34,28 +34,28 @@ public class SequenceFactory {
 	 * @throws SequenceFormatException
 	 * @throws IOException
 	 */
-	public static SequenceFile getSequenceFile (File [] files) throws SequenceFormatException, IOException {
+	public static SequenceFile getSequenceFile (File [] files, int read) throws SequenceFormatException, IOException {
 		
 		SequenceFile [] sequenceFiles = new SequenceFile[files.length];
 		
 		for (int f=0;f<files.length;f++) {
-			sequenceFiles[f] = getSequenceFile(files[f]);
+			sequenceFiles[f] = getSequenceFile(files[f], read);
 		}
 		
 		return new SequenceFileGroup(sequenceFiles);
 		
 	}
 	
-	public static SequenceFile getSequenceFile (File file) throws SequenceFormatException, IOException {
+	public static SequenceFile getSequenceFile (File file, int read) throws SequenceFormatException, IOException {
 		
 		if (System.getProperty("fastqc.sequence_format") != null) {
 			// We're not autodetecting the format, but taking whatever they said
 			
 			if (System.getProperty("fastqc.sequence_format").equals("bam") || System.getProperty("fastqc.sequence_format").equals("sam")) {
-				return new BAMFile(file,false);				
+				return new BAMFile(file,false, read);
 			}
 			else if (System.getProperty("fastqc.sequence_format").equals("bam_mapped") || System.getProperty("fastqc.sequence_format").equals("sam_mapped")) {
-				return new BAMFile(file,true);				
+				return new BAMFile(file,true, read);
 			}
 			else if (System.getProperty("fastqc.sequence_format").equals("fastq")) {
 				return new FastQFile(file);
@@ -74,7 +74,7 @@ public class SequenceFactory {
 		// the type
 		if (file.getName().toLowerCase().endsWith(".bam") || file.getName().toLowerCase().endsWith(".sam")) {
 			// We default to using all reads
-			return new BAMFile(file,false);
+			return new BAMFile(file,false, read);
 		}
 //		else if (file.getName().toLowerCase().endsWith(".compact-reads") || file.getName().toLowerCase().endsWith(".compact_reads") || file.getName().toLowerCase().endsWith(".goby")) {
 //			return new GobyFile(file);

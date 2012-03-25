@@ -46,9 +46,19 @@ public class BAMFile implements SequenceFile {
 	private String name;
 	private Sequence nextSequence = null;
 	Iterator<SAMRecord> it;
-	
-	
-	protected BAMFile (File file, boolean onlyMapped) throws SequenceFormatException, IOException {
+	private final int read;
+	private final int readFilter;
+    
+    
+	protected BAMFile (File file, boolean onlyMapped, int read) throws SequenceFormatException, IOException {
+        this.read = read;
+        switch (read){
+            case 0: readFilter = 4; break;
+            case 1: readFilter = 77; break;
+            case 2: readFilter = 141; break;
+            default: throw new RuntimeException("wrong read number must be 0,1 or 2: "+ read+" "+file.getAbsolutePath());
+        }
+        
 		this.file = file;
 		fileSize = file.length();
 		name = file.getName();
@@ -115,12 +125,16 @@ public class BAMFile implements SequenceFile {
 			// We skip over entries with no mapping if that's what the user asked for
 			if (onlyMapped && record.getReadUnmappedFlag()) {
 				continue;
-			}
+			} else if(record.getFlags() != readFilter){
+                continue;
+            }
 			else {
 				break;
 			}
 		}
-		
+
+
+
 		++count;
 
 		if (recordSize == 0) {
@@ -143,6 +157,7 @@ public class BAMFile implements SequenceFile {
 		}
 
 		nextSequence = new Sequence(this, sequence, qualities, record.getReadName());
+
 
 	}
 

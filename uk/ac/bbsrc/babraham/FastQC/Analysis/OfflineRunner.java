@@ -43,8 +43,10 @@ public class OfflineRunner implements AnalysisListener {
 	
 	private int filesRemaining;
 	private boolean showUpdates = true;
-	
-	public OfflineRunner (String [] filenames) {
+	private final int read;
+    
+	public OfflineRunner (String [] filenames, int read) {
+        this.read = read;
 		
 		// See if we need to show updates
 		if (System.getProperty("fastqc.quiet") != null && System.getProperty("fastqc.quiet").equals("true")) {
@@ -81,7 +83,7 @@ public class OfflineRunner implements AnalysisListener {
 		for (int i=0;i<fileGroups.length;i++) {
 
 			try {
-				processFile(fileGroups[i]);
+				processFile(fileGroups[i], read);
 			}
 			catch (Exception e) {
 				System.err.println("Failed to process "+fileGroups[i][0]);
@@ -102,7 +104,7 @@ public class OfflineRunner implements AnalysisListener {
 		
 	}
 	
-	public void processFile (File [] files) throws Exception {
+	public void processFile (File [] files, int read) throws Exception {
 		for (int f=0;f<files.length;f++) {
 			if (!files[f].exists()) {
 				throw new IOException(files[f].getName()+" doesn't exist");
@@ -110,10 +112,10 @@ public class OfflineRunner implements AnalysisListener {
 		}
 		SequenceFile sequenceFile;
 		if (files.length == 1) {
-			sequenceFile = SequenceFactory.getSequenceFile(files[0]);
+			sequenceFile = SequenceFactory.getSequenceFile(files[0], read);
 		}
 		else {
-			sequenceFile = SequenceFactory.getSequenceFile(files);			
+			sequenceFile = SequenceFactory.getSequenceFile(files, read);
 		}
 						
 		AnalysisRunner runner = new AnalysisRunner(sequenceFile);
@@ -146,15 +148,15 @@ public class OfflineRunner implements AnalysisListener {
 
 		
 		if (System.getProperty("fastqc.output_dir") != null) {
-			String fileName = file.getFile().getName().replaceAll(".gz$","").replaceAll(".bz2$","").replaceAll(".txt$","").replaceAll(".fastq$", "").replaceAll(".sam$", "").replaceAll(".bam$", "")+"_fastqc.zip";
+			String fileName = file.getFile().getName().replaceAll(".gz$","").replaceAll(".bz2$","").replaceAll(".txt$","").replaceAll(".fastq$", "").replaceAll(".sam$", "").replaceAll(".bam$", "")+"_"+read+"_fastqc.zip";
 			reportFile = new File(System.getProperty("fastqc.output_dir")+"/"+fileName);						
 		}
 		else {
-			reportFile = new File(file.getFile().getAbsolutePath().replaceAll(".gz$","").replaceAll(".bz2$","").replaceAll(".txt$","").replaceAll(".fastq$", "").replaceAll(".sam$", "").replaceAll(".bam$", "")+"_fastqc.zip");			
+			reportFile = new File(file.getFile().getAbsolutePath().replaceAll(".gz$","").replaceAll(".bz2$","").replaceAll(".txt$","").replaceAll(".fastq$", "").replaceAll(".sam$", "").replaceAll(".bam$", "")+"_"+read+"_fastqc.zip");
 		}
 		
 		try {
-			new HTMLReportArchive(file, results, reportFile);
+			new HTMLReportArchive(file, results, reportFile, read);
 		}
 		catch (Exception e) {
 			analysisExceptionReceived(file, e);
@@ -171,22 +173,22 @@ public class OfflineRunner implements AnalysisListener {
 				if (showUpdates) System.err.println("It seems our guess for the total number of records wasn't very good.  Sorry about that.");
 			}
 			if (percentComplete > 100) {
-				if (showUpdates) System.err.println("Still going at "+percentComplete+"% complete for "+file.name());
+				if (showUpdates) System.err.println("Still going at "+percentComplete+"% complete for "+file.name()+" "+read);
 			}
 			else {
-				if (showUpdates) System.err.println("Approx "+percentComplete+"% complete for "+file.name());
+				if (showUpdates) System.err.println("Approx "+percentComplete+"% complete for "+file.name()+" "+read);
 			}
 		}
 	}
 
 	public void analysisExceptionReceived(SequenceFile file, Exception e) {
-		System.err.println("Failed to process file "+file.name());
+		System.err.println("Failed to process file "+file.name()+" "+read);
 		e.printStackTrace();
 		--filesRemaining;
 	}
 
 	public void analysisStarted(SequenceFile file) {
-		if (showUpdates) System.err.println("Started analysis of "+file.name());
+		if (showUpdates) System.err.println("Started analysis of "+file.name()+" "+read);
 		
 	}
 	

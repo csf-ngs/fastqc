@@ -22,6 +22,7 @@ package uk.ac.bbsrc.babraham.FastQC;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -170,10 +171,10 @@ public class FastQCApplication extends JFrame {
 			
 			try {
 				if (filesToProcess.length > 1) {
-					sequenceFile = SequenceFactory.getSequenceFile(filesToProcess);
+					sequenceFile = SequenceFactory.getSequenceFile(filesToProcess, 0);
 				}
 				else {
-					sequenceFile = SequenceFactory.getSequenceFile(filesToProcess[0]);
+					sequenceFile = SequenceFactory.getSequenceFile(filesToProcess[0], 0);
 				}
 			}
 			catch (SequenceFormatException e) {
@@ -278,7 +279,7 @@ public class FastQCApplication extends JFrame {
 		ResultsPanel selectedPanel = (ResultsPanel)fileTabs.getSelectedComponent();
 		
 		try {
-			new HTMLReportArchive(selectedPanel.sequenceFile(), selectedPanel.modules(), reportFile);
+			new HTMLReportArchive(selectedPanel.sequenceFile(), selectedPanel.modules(), reportFile, 0);
 		} 
 		catch (IOException e) {
 			JOptionPane.showMessageDialog(this, "Failed to create archive: "+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -287,7 +288,8 @@ public class FastQCApplication extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		
+        System.out.println("arguments: " + Arrays.toString(args));
+
 		// See if we just have to print out the version
 		if (System.getProperty("fastqc.show_version") != null && System.getProperty("fastqc.show_version").equals("true")) {
 			System.out.println("FastQC v"+VERSION);
@@ -304,8 +306,11 @@ public class FastQCApplication extends JFrame {
 			if (System.getProperty("fastqc.unzip") == null || ! System.getProperty("fastqc.unzip").equals("false")) {
 				System.setProperty("fastqc.unzip", "true");
 			}
-			
-			new OfflineRunner(args);
+			if(args.length == 2){
+                int read = Integer.parseInt(args[0]);
+                String[] files = new String[]{args[1]};
+                new OfflineRunner(files, read);
+            }
 			System.exit(0);
 		}
 		
