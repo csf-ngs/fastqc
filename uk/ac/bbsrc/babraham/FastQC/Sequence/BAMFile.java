@@ -53,10 +53,13 @@ public class BAMFile implements SequenceFile {
 	protected BAMFile (File file, boolean onlyMapped, int read) throws SequenceFormatException, IOException {
         this.read = read;
         switch (read){
-            case 0: readFilter = 4; break;
-            case 1: readFilter = 77; break;
-            case 2: readFilter = 141; break;
-            default: throw new RuntimeException("wrong read number must be 0,1 or 2: "+ read+" "+file.getAbsolutePath());
+            case 0: readFilter = 4; break;    //unmapped
+            case 1: readFilter = 77; break;   //paired unmapped  unmapped  first
+            case 2: readFilter = 141; break; //paired unmapped  unmapped  second
+            case 3: readFilter = 516; break; //unmapped  + non PF
+            case 4: readFilter = 589; break;  //paired unmapped  unmapped  first + non PF
+            case 5: readFilter = 653; break;  //paired unmapped  unmapped  second + non PF
+            default: throw new RuntimeException("wrong read number must be 0-5: "+ read+" "+file.getAbsolutePath());
         }
         
 		this.file = file;
