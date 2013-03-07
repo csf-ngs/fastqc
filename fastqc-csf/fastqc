@@ -131,13 +131,11 @@ if ($format) {
 }
 
 if ($read) {
-
-   unless ($read eq '0' || $read eq '1' || $read eq '2'){
-       die "this is a specialised version of fastqc you have to specify the read (0, 1 or 2)\n";
+   unless (grep { $_ eq $read } ("0", "1", "2", "3", "4", "5")){
+       die "this is a specialised version of fastqc you have to specify the read: 0 (SR), 1 (PE:1), 2 (PE:2), 3 (SR:Q-), 4 (PE:1:Q-), 5 (PE:2:Q-)\n";
    }
-
 }else{
-   die "this is a specialised version of fastqc you have to specify the read (0, 1 or 2)\n";
+   die "this is a specialised version of fastqc you have to specify the read: 0 (SR), 1 (PE:1), 2 (PE:2), 3 (SR:Q-), 4 (PE:1:Q-), 5 (PE:2:Q-)\n";
 }
 
 
@@ -236,7 +234,9 @@ DESCRIPTION
                     form name[tab]sequence.  Lines prefixed with a hash will
                     be ignored.
 
-    --read          The read number from the unaligned bam file: 0 for 1 read, 1 for first read in pair => 77, 2 for second read in pair => 141
+    --read          The read number from the unaligned bam file:
+                    0 for SE, 1 for first read in pair => 77, 2 for second read in pair => 141, for non QC filtered reads (i.e. good reads)
+                    3 for SE, 4 PE1, 5 PE2 for QC filtered reads (i.e. bad reads)
 
    -q --quiet       Supress all progress messages on stdout and only report errors.
                     
